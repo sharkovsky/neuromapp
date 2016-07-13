@@ -36,6 +36,8 @@
 #include <boost/bind.hpp>
 #include <boost/array.hpp>
 
+#include <scorep/SCOREP_User.h>
+
 #include "coreneuron_1.0/event_passing/queueing/queue.h"
 
 //define events as spike_item
@@ -70,6 +72,17 @@ inline void barrier(){
     MPI_Barrier(MPI_COMM_WORLD);
 }
 
+inline void allgather_barrier(){
+    SCOREP_USER_FUNC_BEGIN()
+    MPI_Barrier(MPI_COMM_WORLD);
+    SCOREP_USER_FUNC_END()
+}
+
+inline void allgatherv_barrier(){
+    SCOREP_USER_FUNC_BEGIN()
+    MPI_Barrier(MPI_COMM_WORLD);
+    SCOREP_USER_FUNC_END()
+}
 //BLOCKING
 /**
  * \fn allgather(data& d)
@@ -78,8 +91,10 @@ inline void barrier(){
  */
 template<typename data>
 void allgather(data& d){
+    SCOREP_USER_FUNC_BEGIN()
     int send_size = d.spikeout_.size();
     MPI_Allgather(&send_size, 1, MPI_INT, &(d.nin_[0]), 1, MPI_INT, MPI_COMM_WORLD);
+    SCOREP_USER_FUNC_END()
 }
 
 /**
@@ -90,8 +105,10 @@ void allgather(data& d){
  */
 template<typename data>
 void allgatherv(data& d, MPI_Datatype spike){
+    SCOREP_USER_FUNC_BEGIN()
     MPI_Allgatherv(&(d.spikeout_[0]), d.spikeout_.size(), spike,
         &(d.spikein_[0]), &(d.nin_[0]), &(d.displ_[0]), spike, MPI_COMM_WORLD);
+    SCOREP_USER_FUNC_END()
 }
 
 /**
@@ -149,12 +166,16 @@ void accumulate_stats(data& d){
  */
 template<typename data>
 void blocking_spike(data& d, MPI_Datatype spike){
+    SCOREP_USER_FUNC_BEGIN()
     //gather how many spikes each process is sending
+    allgather_barrier();
     allgather(d);
     //set the displacements
     set_displ(d);
     //next distribute items to every other process using allgatherv
+    allgatherv_barrier();
     allgatherv(d, spike);
+    SCOREP_USER_FUNC_END()
 }
 
 #endif
