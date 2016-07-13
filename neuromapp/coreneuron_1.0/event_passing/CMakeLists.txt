@@ -5,6 +5,8 @@ include_directories(${PROJECT_SOURCE_DIR})
 #ENVIRONMENT LIBRARY
 add_library (coreneuron10_environment environment/generator.cpp
                                       environment/presyn_maker.cpp)
+target_link_libraries (coreneuron10_environment
+                       storage)
 
 install (TARGETS coreneuron10_environment DESTINATION lib)
 install (FILES environment/generator.h
@@ -22,10 +24,10 @@ install (FILES queueing/pool.h
                queueing/thread.h
                queueing/queue.h DESTINATION include)
 target_link_libraries (coreneuron10_queueing
+                       storage
                        coreneuron10_environment
                        coreneuron10_solver
-                       coreneuron10_cstep
-                       storage)
+                       coreneuron10_cstep)
 
 #SPIKE LIBRARY
 install (FILES spike/algos.hpp

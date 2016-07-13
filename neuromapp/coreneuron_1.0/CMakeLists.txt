@@ -21,6 +21,7 @@ add_library (coreneuron10_kernel STATIC
             kernel/mechanism/Ih.c
             kernel/main.c)
 
+target_link_libraries( coreneuron10_kernel storage)
 
 add_library (coreneuron10_solver STATIC
              solver/helper.c
