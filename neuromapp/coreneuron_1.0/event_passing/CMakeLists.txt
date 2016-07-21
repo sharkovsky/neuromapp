@@ -40,16 +40,20 @@ add_library (coreneuron10_event drivers/main.cpp)
 
 add_executable(event_exec drivers/event.cpp)
 target_link_libraries (event_exec
+                       storage
                        coreneuron10_queueing
                        coreneuron10_environment
+                       coreneuron10_solver
+                       coreneuron10_kernel
+                       coreneuron10_common
                        ${MPI_CXX_LIBRARIES}
                        ${MPI_C_LIBRARIES})
 
-add_executable(dist_exec drivers/distributed_driver.cpp)
-target_link_libraries (dist_exec
-                       coreneuron10_queueing
-                       coreneuron10_environment
-                       ${MPI_CXX_LIBRARIES}
-                       ${MPI_C_LIBRARIES})
+#add_executable(dist_exec drivers/distributed_driver.cpp)
+#target_link_libraries (dist_exec
+#                       coreneuron10_queueing
+#                       coreneuron10_environment
+#                       ${MPI_CXX_LIBRARIES}
+#                       ${MPI_C_LIBRARIES})
 
-install (TARGETS event_exec dist_exec DESTINATION bin)
+#install (TARGETS event_exec dist_exec DESTINATION bin)

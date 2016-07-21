@@ -32,7 +32,7 @@ add_library (coreneuron10_cstep STATIC
              cstep/helper.c
              cstep/main.c)
 
-target_link_libraries(coreneuron10_cstep coreneuron10_kernel coreneuron10_common)
+#target_link_libraries(coreneuron10_cstep coreneuron10_kernel coreneuron10_common)
 
 install (TARGETS coreneuron10_kernel coreneuron10_solver coreneuron10_cstep
                  coreneuron10_common DESTINATION lib)
