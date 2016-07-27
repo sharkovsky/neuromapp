@@ -10,6 +10,9 @@
 
 #include <string>
 #include <deque>
+#include <cassert>
+
+#include "mpi.h"
 
 typedef long unsigned int size_t;
 
@@ -91,8 +94,11 @@ namespace environment
     };
 
     class distribution_from_file : public neurondistribution {
+    public:
+	typedef std::deque<size_t>::iterator iterator;
+	typedef std::deque<size_t>::const_iterator const_iterator;
 
-	distribution_from_file(const size_t me, const size_t glob_ncells, const std::string gid_file_dir_path);
+	distribution_from_file(const size_t me, const std::string gid_file_dir_path);
 
         inline size_t getlocalcells() const { return local_gids_.size(); }
         inline size_t getglobalcells() const { return global_number_; }
@@ -106,7 +112,7 @@ namespace environment
 	}
 
     private:
-        const size_t global_number_;
+        size_t global_number_;
 	std::deque<size_t> local_gids_;
 
     };
