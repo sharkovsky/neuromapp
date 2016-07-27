@@ -8,6 +8,9 @@
 #ifndef NEURONDISTRIBUTION_H_
 #define NEURONDISTRIBUTION_H_
 
+#include <string>
+#include <deque>
+
 typedef long unsigned int size_t;
 
 namespace environment
@@ -86,6 +89,28 @@ namespace environment
         size_t local_number;
         size_t start;
     };
+
+    class distribution_from_file : public neurondistribution {
+
+	distribution_from_file(const size_t me, const size_t glob_ncells, const std::string gid_file_dir_path);
+
+        inline size_t getlocalcells() const { return local_gids_.size(); }
+        inline size_t getglobalcells() const { return global_number_; }
+
+        bool isLocal(size_t id) const;
+        size_t global2local(size_t glo) const;
+
+        size_t local2global(size_t loc) const {
+	    assert(loc < local_gids_.size());
+	    return local_gids_[loc];
+	}
+
+    private:
+        const size_t global_number_;
+	std::deque<size_t> local_gids_;
+
+    };
+
 };
 
 #endif /* NEURONDISTRIBUTION_H_ */

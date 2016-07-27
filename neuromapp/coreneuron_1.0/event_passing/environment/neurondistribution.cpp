@@ -6,6 +6,9 @@
  */
 #include <cassert>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 #include "coreneuron_1.0/event_passing/environment/neurondistribution.h"
 
 environment::continousdistribution::continousdistribution(size_t groups, size_t me, size_t cells):
@@ -34,6 +37,19 @@ environment::continousdistribution::continousdistribution(size_t groups, size_t 
         start += offset;
 }
 
+environment::distribution_from_file::distribution_from_file(const size_t me, const size_t glob_ncells, const std::string gid_file_dir_path) : global_number_(glob_ncells) {
+    std::stringstream filename;
+    filename << gid_file_dir_path << "/gid" << me << ".dat";
+    std::fstream gid_file;
+    gid_file.open( filename.str().c_str() , std::ios::in );
 
+    size_t this_gid;
+    while ( gid_file >> this_gid ) {
+	local_gids_.push_back(this_gid);
+    }
+
+    gid_file.close();
+
+}
 
 
