@@ -87,6 +87,9 @@ public:
     template <typename G, typename P>
     void fixed_step(G& generator, const P& presyns);
 
+    template <typename G, typename P>
+    void fixed_step(G& generator, const P& presyns, const int timesteps);
+
     /** \fn void filter(const P& presyns)
      *  \brief filters out relevent events(using the function matches()),
      *  and randomly selects a destination cellgroup, and delivers them

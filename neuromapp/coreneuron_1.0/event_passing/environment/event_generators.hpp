@@ -34,6 +34,8 @@
 #include <boost/random.hpp>
 
 #include <cassert>
+#include <string>
+#include <fstream>
 
 #include "coreneuron_1.0/event_passing/environment/generator.h"
 
@@ -92,6 +94,8 @@ namespace environment {
     template< typename Iterator >
     void generate_uniform_events(Iterator beg, int simtime, int ngroups, int firing_interval, neurondistribution* neuron_dist);
 
+    template< typename Iterator >
+    void replay_events_from_file(Iterator beg, int rank, int simtime, int ngroups, double dt, std::string path, neurondistribution& neuron_dist);
 }
 
 #include "coreneuron_1.0/event_passing/environment/event_generators.ipp"

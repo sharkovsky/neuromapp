@@ -96,6 +96,28 @@ void pool::fixed_step(G& generator, const P& presyns){
     time_ += min_delay_;
 }
 
+//PARALLEL FUNCTIONS
+template <typename G, typename P>
+void pool::fixed_step(G& generator, const P& presyns, const int timesteps){
+    #pragma omp parallel for schedule(static,1)
+    for(int i = 0; i < thread_datas_.size(); ++i){
+        for(int j = 0; j < timesteps; ++j){
+            send_events(i, generator, presyns);
+            //Have threads enqueue their interThreadEvents
+            thread_datas_[i].enqueue_my_events();
+
+            if(perform_algebra_)
+                thread_datas_[i].l_algebra();
+
+            /// Deliver events
+            while(thread_datas_[i].deliver());
+
+            thread_datas_[i].increment_time();
+        }
+    }
+    time_ += timesteps;
+}
+
 template <typename P>
 void pool::filter(const P& presyns){
     std::map<int, std::vector<int> >::iterator it;

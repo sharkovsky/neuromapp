@@ -12,7 +12,14 @@
 namespace environment {
 
 //create a pair out of time and presyn
-typedef std::pair<int, double> gen_event;
+//typedef std::pair<int, double> gen_event;
+struct gen_event {
+    int first; // the GID, but keep same API ad std::pair
+    double second; // the time, but keep same API ad std::pair
+    inline bool operator > (const gen_event& x) const {
+	return second > x.second;
+    }
+};
 
 /** event_generator
  *  /brief generates all events needed for the simulation and stores them
@@ -21,12 +28,12 @@ typedef std::pair<int, double> gen_event;
  */
 class event_generator {
 private:
-    std::vector<std::queue<gen_event> > event_pool_;
+    //std::vector<std::queue<gen_event> > event_pool_;
+    std::vector<std::priority_queue<gen_event, std::vector<gen_event>, std::greater<gen_event> > > event_pool_;
 
 public:
-
-    typedef std::vector<std::queue<gen_event> >::iterator iterator;
-    typedef std::vector<std::queue<gen_event> >::const_iterator const_iterator;
+    typedef std::vector<std::priority_queue<gen_event, std::vector<gen_event>, std::greater<gen_event> > >::iterator iterator;
+    typedef std::vector<std::priority_queue<gen_event, std::vector<gen_event>, std::greater<gen_event> > >::const_iterator const_iterator;
 
     iterator begin() {return event_pool_.begin();};
     const_iterator begin() const {return event_pool_.begin();};
@@ -74,6 +81,7 @@ public:
      *  \return size of the ith queue
      */
     int get_size(int id) const { return event_pool_[id].size(); }
+
 };
 
 }// end of namespace

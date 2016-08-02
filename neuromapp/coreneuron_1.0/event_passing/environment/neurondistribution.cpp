@@ -4,6 +4,9 @@
  *  Created on: Jul 11, 2016
  *      Author: schumann
  */
+
+#include <mpi.h>
+
 #include <cassert>
 #include <iostream>
 #include <fstream>
@@ -38,11 +41,12 @@ environment::continousdistribution::continousdistribution(size_t groups, size_t 
         start += offset;
 }
 
-environment::distribution_from_file::distribution_from_file(const size_t me, const std::string gid_file_dir_path) {
+environment::distribution_from_file::distribution_from_file(const size_t me, const std::string gid_file_dir_path) : global_number_(0) {
     std::stringstream filename;
-    filename << gid_file_dir_path << "/gid" << me << ".dat";
+    filename << gid_file_dir_path << "/gids_rank_" << me << ".dat";
     std::fstream gid_file;
     gid_file.open( filename.str().c_str() , std::ios::in );
+    if ( ! gid_file.is_open() ) { std::cerr << "Rank " << me << ": error opening file " << filename << std::endl; MPI_Abort(MPI_COMM_WORLD, 1); }
 
     size_t this_gid;
     while ( gid_file >> this_gid ) {
@@ -52,7 +56,8 @@ environment::distribution_from_file::distribution_from_file(const size_t me, con
     gid_file.close();
 
     size_t local_num_of_cells = local_gids_.size();
-    MPI_Allreduce(&local_num_of_cells, &global_number_, 1, MPI_UNSIGNED, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&local_num_of_cells, &global_number_, 1, MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+    if (me == 0) { std::cerr << "In total there were: " << global_number_ << " cells" << std::endl; }
 
 }
 

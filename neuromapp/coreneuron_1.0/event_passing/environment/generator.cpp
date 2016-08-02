@@ -22,11 +22,11 @@ bool event_generator::compare_top_lte(int id, double comparator) const{
     if(this->empty(id))
         return false;
     else
-        return (event_pool_[id].front().second <= comparator);
+        return (event_pool_[id].top().second <= comparator);
 }
 
 gen_event event_generator::pop(int id){
-    gen_event ev = event_pool_[id].front();
+    gen_event ev = event_pool_[id].top();
     event_pool_[id].pop();
     return ev;
 }

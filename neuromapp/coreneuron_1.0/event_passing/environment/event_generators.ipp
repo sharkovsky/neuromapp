@@ -196,6 +196,42 @@ void generate_uniform_events(Iterator beg, int simtime, int ngroups, int firing_
     }
 }
 
+template< typename Iterator >
+    void replay_events_from_file(Iterator beg, int me, int simtime, int ngroups, double dt, std::string path_to_file, neurondistribution& neuron_dist) {
+
+    std::stringstream filename;
+    filename << path_to_file << "/out.dat";
+    std::fstream spikes_file;
+    spikes_file.open( filename.str().c_str(), std::ios::in );
+
+    gen_event new_event;
+
+    double event_time;
+    int src_gid;
+    int converted_event_time;
+
+    Iterator it;
+    while ( spikes_file >> event_time >> src_gid ) {
+        converted_event_time = static_cast<int>( ((event_time+1e-10)/dt) ); // NEURON's 1e-10 trick
+	if ( converted_event_time > simtime ) break;
+	/*
+	if ( me == 0 ) {
+	    std::cout << "Event time: " << event_time << " step 1 " << event_time+0.5*dt << " step 2 " << (event_time+0.5*dt)/dt << " step 3 " << floor((event_time+0.5*dt)/dt) << " enqueue time: " << converted_event_time << std::endl;
+	}
+	*/
+	// only enqueue local events
+        if ( neuron_dist.isLocal( src_gid ) && converted_event_time < simtime ) {
+	    const int dest = src_gid % ngroups;
+
+	    new_event.first = src_gid;
+	    new_event.second = converted_event_time;
+
+	    it = beg;
+	    std::advance(it, dest);
+	    it->push(new_event);
+	}
+    }
+}
 
 
 } // close namespace environment
