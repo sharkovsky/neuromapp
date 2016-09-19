@@ -87,6 +87,8 @@ template<>
 void allgather<spike::spike_interface_stats_collector>(spike::spike_interface_stats_collector& d){
     int send_size = d.spikeout_.size();
     double t0,t1;
+    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
     t0 = MPI_Wtime();
     MPI_Allgather(&send_size, 1, MPI_INT, &(d.nin_[0]), 1, MPI_INT, MPI_COMM_WORLD);
     t1 = MPI_Wtime();
@@ -97,6 +99,8 @@ template<>
 void allgather<spike::spike_interface_stats_collector_large_mpi>(spike::spike_interface_stats_collector_large_mpi& d){
     int send_size = d.spikeout_.size();
     double t0,t1;
+    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
     t0 = MPI_Wtime();
     MPI_Allgather(&send_size, 1, MPI_INT, &(d.nin_[0]), 1, MPI_INT, MPI_COMM_WORLD);
     t1 = MPI_Wtime();
@@ -119,6 +123,8 @@ void allgatherv(data& d, MPI_Datatype spike){
 template<>
 void allgatherv<spike::spike_interface_stats_collector>(spike::spike_interface_stats_collector& d, MPI_Datatype spike){
     double t0,t1;
+    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
     t0 = MPI_Wtime();
     MPI_Allgatherv(&(d.spikeout_[0]), d.spikeout_.size(), spike,
         &(d.spikein_[0]), &(d.nin_[0]), &(d.displ_[0]), spike, MPI_COMM_WORLD);
@@ -129,6 +135,8 @@ void allgatherv<spike::spike_interface_stats_collector>(spike::spike_interface_s
 template<>
 void allgatherv<spike::spike_interface_stats_collector_large_mpi>(spike::spike_interface_stats_collector_large_mpi& d, MPI_Datatype spike){
     double t0,t1;
+    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
     t0 = MPI_Wtime();
     MPI_Allgatherv(&(d.spikeout_[0]), d.spikeout_.size(), spike,
         &(d.spikein_[0]), &(d.nin_[0]), &(d.displ_[0]), spike, MPI_COMM_WORLD);
