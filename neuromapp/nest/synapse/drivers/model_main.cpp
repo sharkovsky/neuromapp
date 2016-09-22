@@ -324,7 +324,9 @@ namespace nest
             //build connection manager
             connectionmanager cm(vm);
             environment::continousdistribution neuro_dist(size, rank, ncells);
-            environment::presyn_maker presyns(fanout, environment::fixedoutdegree);
+	    environment::connectionRules::fixedoutdegree * k = new environment::connectionRules::fixedoutdegree(fanout);
+            environment::presyn_maker presyns(k);
+	    delete k;
             presyns(thrd, &neuro_dist);
 
             //preallocate vector for results
@@ -470,7 +472,6 @@ namespace nest
         }
 
         std::cout << "Duration: " << delay << std::endl;
-
     }
 
     int model_execute(int argc, char* const argv[])

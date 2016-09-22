@@ -251,13 +251,14 @@ BOOST_AUTO_TEST_CASE(pool_fixed_step_1mindelay){
     int simtime = mindelay;
 
     //create the test environment
-    environment::presyn_maker presyns(fanin);
+    environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker p(k);
     spike::spike_interface spike(nprocs);
 
     environment::continousdistribution neuro_dist(nprocs, rank, ncells);
 
     //generate
-    presyns(rank, &neuro_dist);
+    p(rank, &neuro_dist);
     environment::event_generator generator(ngroups);
 
     double mean = static_cast<double>(simtime) / static_cast<double>(nspikes);
@@ -273,11 +274,12 @@ BOOST_AUTO_TEST_CASE(pool_fixed_step_1mindelay){
 
     //process events
     queueing::pool pl(false, ngroups, mindelay, rank, spike);
-    pl.fixed_step(generator, presyns);
+    pl.fixed_step(generator, p);
 
     //check that every event went to the spikeout_ buffer
     BOOST_CHECK(sum_events == spike.spikeout_.size());
     std::cout<<"SUM: "<<sum_events<<" SPIKES: "<<spike.spikeout_.size()<<std::endl;
+    delete k;
 }
 
 /**
@@ -296,11 +298,12 @@ BOOST_AUTO_TEST_CASE(pool_send_ite){
     environment::continousdistribution neuro_dist(nprocs, rank, ncells);
 
     //create the test environment
-    environment::presyn_maker presyns(fanin);
+    environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker p(k);
     spike::spike_interface spike(nprocs);
 
     //generate
-    presyns(rank, &neuro_dist);
+    p(rank, &neuro_dist);
     environment::event_generator generator(ngroups);
 
     double mean = static_cast<double>(simtime) / static_cast<double>(nspikes);
@@ -316,9 +319,10 @@ BOOST_AUTO_TEST_CASE(pool_send_ite){
     //process events
     queueing::pool pl(false, ngroups, mindelay, rank, spike);
     while(pl.get_time() <= simtime){
-        pl.fixed_step(generator, presyns);
+        pl.fixed_step(generator, p);
     }
 
     //check that every event went to the spikeout_ buffer
     BOOST_CHECK(spike.spikeout_.size() == sum_events);
+    delete k;
 }

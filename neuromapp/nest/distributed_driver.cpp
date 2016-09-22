@@ -104,7 +104,8 @@ int main(int argc, char* argv[]) {
         detectors_targetindex[i] = nest::scheduler::add_node(&detectors[i]);  //add them to the scheduler
     }
 
-    environment::presyn_maker presyns(fan, environment::fixedoutdegree);
+    environment::connectionRules::fixedoutdegree * k = new environment::connectionRules::fixedoutdegree(fan);
+    environment::presyn_maker presyns(k);
     presyns(rank, &neuro_dist);
     nest::connectionmanager cn(vm);
 
@@ -212,6 +213,7 @@ int main(int argc, char* argv[]) {
     //pl.accumulate_stats();
     //accumulate_stats(s_interface);
 
+    delete k;
     MPI_Finalize();
     return 0;
 }

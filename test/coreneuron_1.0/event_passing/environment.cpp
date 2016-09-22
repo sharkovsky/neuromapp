@@ -39,14 +39,19 @@
  * Test the constructor of presyn_maker class
  */
 BOOST_AUTO_TEST_CASE(presyns_constructor){
-    environment::presyn_maker p1;
+    environment::connectionRules::fixedindegree k(1);
+    // N.B. the presyn_maker does not make a copy of the connection rule, therefore if the connection rule defined above goes out of scope, the presyn_maker will no longer have a valid pointer. It is more recommended to use the approach with operator new defined below.
+    environment::presyn_maker p1(&k);
 
     boost::mt19937 rng(time(NULL));
     boost::random::uniform_int_distribution<> uniform(1, 10);
     int ncells = uniform(rng);
     int fanin = ncells / 2 + 1;
     int netcons = uniform(rng);
-    environment::presyn_maker p2(fanin);
+    // N.B. user has responsibility of managing memory for connection rules
+    environment::connectionRules::fixedindegree * k2 = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker p2(k2);
+    delete k2;
     //previously had tests here
 }
 
@@ -60,7 +65,8 @@ BOOST_AUTO_TEST_CASE(presyns_functor_test){
     //passed into the find function, but not used
     int ncells = uniform(rng);
     int fanin = ncells;
-    environment::presyn_maker p(fanin);
+    environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker p(k);
     int nprocs = 3;
     int ngroups = 3;
     int rank = 0;
@@ -92,6 +98,7 @@ BOOST_AUTO_TEST_CASE(presyns_functor_test){
         }
     }
     BOOST_CHECK(valid_input);
+    delete k;
 }
 
 /**
@@ -110,7 +117,8 @@ BOOST_AUTO_TEST_CASE(presyns_find_test){
 
     environment::continousdistribution neuro_dist(nprocs, rank, ncells);
 
-    environment::presyn_maker p(fanin);
+    environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker p(k);
     p(rank, &neuro_dist);
 
     const int offset = ncells % nprocs;
@@ -136,6 +144,7 @@ BOOST_AUTO_TEST_CASE(presyns_find_test){
     }
     BOOST_CHECK(valid_input);
     BOOST_CHECK(valid_output);
+    delete k;
 }
 
 BOOST_AUTO_TEST_CASE(presyns_check_neuron_dist){
@@ -153,7 +162,8 @@ BOOST_AUTO_TEST_CASE(presyns_check_neuron_dist){
     for (int rank=0; rank< nprocs; rank++){
 
         environment::continousdistribution neuro_dist(nprocs, rank, ncells);
-        environment::presyn_maker p(fanin);
+	environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+        environment::presyn_maker p(k);
         p(rank, &neuro_dist);
 
         for (int cell=0; cell<ncells; cell++) {
@@ -163,6 +173,7 @@ BOOST_AUTO_TEST_CASE(presyns_check_neuron_dist){
                 stats_cellsonrank[rank]++;
             }
         }
+	delete k;
     }
 
 
@@ -199,7 +210,8 @@ BOOST_AUTO_TEST_CASE(generator_kai){
 
     environment::continousdistribution neuro_dist(nprocs, rank, ncells);
     //generate events
-    environment::presyn_maker p(fanin);
+    environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker p(k);
     p(rank, &neuro_dist);
 
     environment::event_generator generator(ngroups);
@@ -234,6 +246,7 @@ BOOST_AUTO_TEST_CASE(generator_kai){
     }
     BOOST_CHECK(valid_time);
     BOOST_CHECK(valid_gid);
+    delete k;
 }
 
 BOOST_AUTO_TEST_CASE(generator_poisson){
@@ -249,7 +262,8 @@ BOOST_AUTO_TEST_CASE(generator_poisson){
 
     environment::continousdistribution neuro_dist(nprocs, rank, ncells);
     //generate events
-    environment::presyn_maker p(fanin);
+    environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker p(k);
     p(rank, &neuro_dist);
 
     environment::event_generator generator(ngroups);
@@ -284,6 +298,7 @@ BOOST_AUTO_TEST_CASE(generator_poisson){
     }
     BOOST_CHECK(valid_time);
     BOOST_CHECK(valid_gid);
+    delete k;
 }
 
 BOOST_AUTO_TEST_CASE(generator_uniform){
@@ -300,7 +315,8 @@ BOOST_AUTO_TEST_CASE(generator_uniform){
 
     environment::continousdistribution neuro_dist(nprocs, rank, ncells);
     //generate events
-    environment::presyn_maker p(fanin);
+    environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker p(k);
     p(rank, &neuro_dist);
 
     environment::event_generator generator(ngroups);
@@ -335,6 +351,7 @@ BOOST_AUTO_TEST_CASE(generator_uniform){
     }
     BOOST_CHECK(valid_time);
     BOOST_CHECK(valid_gid);
+    delete k;
 }
 
 

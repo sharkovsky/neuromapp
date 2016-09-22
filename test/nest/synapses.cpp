@@ -422,11 +422,12 @@ BOOST_AUTO_TEST_CASE(nest_manager_build_from_neuron) {
     }
 
     environment::continousdistribution neuro_dist(1, 0, ncells);
-    environment::presyn_maker presyns(outgoing, environment::fixedoutdegree);
-    presyns(0, &neuro_dist);
+    environment::connectionRules::fixedoutdegree * k = new environment::connectionRules::fixedoutdegree(outgoing);
+    environment::presyn_maker p(k);
+    p(0, &neuro_dist);
 
     nest::connectionmanager cm(vm);
-    build_connections_from_neuron(0, neuro_dist, presyns, detectors_targetindex, cm);
+    build_connections_from_neuron(0, neuro_dist, p, detectors_targetindex, cm);
     BOOST_REQUIRE_EQUAL(cm.connections_[ 0 ].size(), ncells);
 
     nest::spikeevent se;
@@ -437,6 +438,7 @@ BOOST_AUTO_TEST_CASE(nest_manager_build_from_neuron) {
         cm.send(0, i, se);
         BOOST_REQUIRE_EQUAL(detectors[0].spikes.size(), (i+1)*outgoing);
     }
+    delete k;
 }
 
 

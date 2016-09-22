@@ -26,6 +26,11 @@ environment::continousdistribution::continousdistribution(size_t groups, size_t 
     start = me * local_number;
     if (!hasonemore)
         start += offset;
+
+    for(int i=0; i<local_number; ++i){
+	local_gids_.push_back(start+i);
+    }
+
 }
 
 environment::continousdistribution::continousdistribution(size_t groups, size_t me, environment::continousdistribution* parent_distr):

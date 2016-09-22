@@ -27,6 +27,9 @@
 #define MAPP_PRESYN_MAKER_H
 
 #include <map>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include "coreneuron_1.0/event_passing/environment/generator.h"
 #include "coreneuron_1.0/event_passing/environment/neurondistribution.h"
@@ -34,24 +37,51 @@
 namespace environment {
 
 typedef std::vector<int> presyn;
-enum degree {fixedindegree, fixedoutdegree};
+typedef std::map<int, presyn> gid2in_type;
+typedef std::map<int, presyn> gid2out_type;
+
+namespace connectionRules {
+
+    struct connectionRule {
+	virtual void connect ( gid2in_type&, gid2out_type&, neurondistribution*, int rank) {};
+    };
+
+    struct fixedindegree : public connectionRule {
+	int fanin_;
+	fixedindegree( int fanin ) : fanin_(fanin) {}
+	void connect ( gid2in_type&, gid2out_type&, neurondistribution*, int rank);
+    };
+    struct fixedoutdegree : public connectionRule {
+	int fanout_;
+	fixedoutdegree( int fanout ) : fanout_(fanout) {}
+	void connect ( gid2in_type&, gid2out_type&, neurondistribution*, int rank);
+    };
+    struct fromfile : public connectionRule {
+	std::string filepath_root_;
+	fromfile( std::string path ) : filepath_root_(path) {}
+	void connect ( gid2in_type&, gid2out_type&, neurondistribution*, int rank);
+    };
+} // close connectionRules namespace
+
+
 /** presyn_maker
  * creates input and output presyns required for spike exchange
  */
 class presyn_maker {
 private:
-    int fan_;
-    degree degree_;
-    std::map<int, presyn> inputs_;
-    std::map<int, presyn> outputs_;
+    connectionRules::connectionRule * connection_rule_;
+    gid2in_type inputs_;
+    gid2out_type outputs_;
 public:
     /** \fn presyn_maker(int ncells, int fanin)
-     *  \brief creates the presyn_maker and sets member variables
+     *  \brief creates the presyn_maker with a given connection rule.
+     *
+     *  \warning the user is responsible for managing the memory associated to the connection rule!
+     *
      *  \param ncells the total number of cells in the simulation
-     *  \param fan the number of in/outcoming connections per cell
+     *  \param fan the number of incoming connections per cell
      */
-    explicit presyn_maker(int fan=0, degree fd=fixedindegree):
-    fan_(fan), degree_(fd){}
+    explicit presyn_maker(connectionRules::connectionRule * rule) : connection_rule_(rule) {};
 
     /** \fn void operator()(int nprocs, int ngroups, int rank)
      *  \brief generates both the input and output presyns.
@@ -59,7 +89,9 @@ public:
      *  \param ngroups the number of cell groups per process
      *  \param rank the rank of the current process
      */
-    void operator()(int rank, neurondistribution* neuron_dist);
+    void operator()(int rank, neurondistribution* neuron_dist) {
+	connection_rule_->connect(inputs_, outputs_, neuron_dist, rank);
+    }
 
 //GETTERS
 

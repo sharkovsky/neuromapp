@@ -91,6 +91,7 @@ namespace environment
         const size_t global_number;
         size_t local_number;
         size_t start;
+	std::deque<size_t> local_gids_;
     };
 
     class distribution_from_file : public neurondistribution {
@@ -111,10 +112,12 @@ namespace environment
 	    return local_gids_[loc];
 	}
 
+	iterator begin() { return local_gids_.begin(); };
+	iterator end() { return local_gids_.end(); };
+
     private:
         size_t global_number_;
 	std::deque<size_t> local_gids_;
-
     };
 
 };

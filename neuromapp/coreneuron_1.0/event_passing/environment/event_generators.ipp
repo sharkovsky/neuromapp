@@ -196,6 +196,12 @@ void generate_uniform_events(Iterator beg, int simtime, int ngroups, int firing_
     }
 }
 
+/*! \brief replays spike events from an out.dat file
+*
+*   Assumes that each line of the out.dat is of the format
+*   time_of_spike   GID
+*   Moreover, assumes that the out.dat file is sorted according to increasing firing times
+*/
 template< typename Iterator >
     void replay_events_from_file(Iterator beg, int me, int simtime, int ngroups, double dt, std::string path_to_file, neurondistribution& neuron_dist) {
 

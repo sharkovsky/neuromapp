@@ -77,9 +77,11 @@ int main(int argc, char* argv[]) {
     environment::generate_events_kai(generator.begin(),
                               simtime, ngroups, rank, size, lambda, &neuro_dist);
 
-    environment::presyn_maker presyns(fanin);
+    environment::connectionRules::fixedindegree * k = new environment::connectionRules::fixedindegree(fanin);
+    environment::presyn_maker presyns(k);
     presyns(rank, &neuro_dist);
     spike::spike_interface s_interface(size);
+    delete k;
 
     //run simulation
     MPI_Comm neighborhood = create_dist_graph(presyns, cellsper);

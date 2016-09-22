@@ -162,7 +162,8 @@ BOOST_AUTO_TEST_CASE(nest_distri_event)
 
     //init neuron environment
     environment::continousdistribution neuro_dist(num_processes, rank, ncells);
-    environment::presyn_maker presyns(outgoing, environment::fixedoutdegree);
+    environment::connectionRules::fixedoutdegree * k = new environment::connectionRules::fixedoutdegree(outgoing);
+    environment::presyn_maker presyns(k);
     presyns(rank, &neuro_dist);
 
     //generate nest data structure out of it
@@ -254,6 +255,7 @@ BOOST_AUTO_TEST_CASE(nest_distri_event)
     for (int i=0; i <detectors.size(); i++) {
         BOOST_CHECK_EQUAL(detectors[i].spikes.size(), 0);
     } 
+    delete k;
 }
 
 
