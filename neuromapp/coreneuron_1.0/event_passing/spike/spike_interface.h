@@ -83,7 +83,7 @@ struct spike_interface_stats_collector : public spike_interface {
         \brief spike_interface constructor. Initializes nin and displ buffers
         to have size == number of processes
      */
-    spike_interface_stats_collector(int nprocs, int myrank, char * outfile_prefix) spike_interface(nprocs) {
+    spike_interface_stats_collector(int nprocs, int myrank, char * outfile_prefix) : spike_interface(nprocs) {
 	std::stringstream outfile_name;
 	outfile_name << outfile_prefix << "/allgather_times_r" << myrank << ".dat";
 	outfile_allgather.open(outfile_name.str().c_str(), std::fstream::out);
@@ -93,8 +93,8 @@ struct spike_interface_stats_collector : public spike_interface {
 	outfile_name << outfile_prefix << "/allgather_v_times_r" << myrank << ".dat";
 	outfile_allgather_v.open(outfile_name.str().c_str(), std::fstream::out);
 
-	allgather_times_.reserve(simtime/mindelay + 3);
-	allgather_v_times_.reserve(simtime/mindelay + 3);
+	//allgather_times_.reserve(simtime/mindelay + 3);
+	//allgather_v_times_.reserve(simtime/mindelay + 3);
     }
 
     ~spike_interface_stats_collector() { outfile_allgather.close(); outfile_allgather_v.close();  }
@@ -118,9 +118,9 @@ struct spike_interface_stats_collector_large_mpi : public spike_interface {
      */
     spike_interface_stats_collector_large_mpi(int nprocs, int simtime, int mindelay, int myrank, char * outfile_prefix, int ncells, int nSpikes): spike_interface(nprocs), nprocs_(nprocs), simtime_(simtime), mindelay_(mindelay), ncells_(ncells), nSpikes_(nSpikes), outfile_prefix_(outfile_prefix)  {
 
-	allgather_times_.reserve(simtime/mindelay + 3);
-	allgather_v_times_.reserve(simtime/mindelay + 3);
-	allgather_v_sizes_.reserve(simtime/mindelay + 3);
+	//allgather_times_.reserve(simtime/mindelay + 3);
+	//allgather_v_times_.reserve(simtime/mindelay + 3);
+	//allgather_v_sizes_.reserve(simtime/mindelay + 3);
     }
 
 };
