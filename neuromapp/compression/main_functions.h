@@ -93,13 +93,13 @@ void stream_bench_routine(po::variables_map vm) {
     //must run the stream bench a separate time without the split argument provided for comparison
     if (vm.count("split")) {
         if (vm.count("compress")) {
-            binary_stream_vectors<value_type,allocator_type> vectors(true);
+            binary_stream_vectors<value_type,allocator_type> vectors(true, vm["block_size"].as<int>(), vm["vect_size"].as<int>());
             copy_benchmark<binary_stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             scale_benchmark<binary_stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             add_benchmark<binary_stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             triad_benchmark<binary_stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
         } else {
-            binary_stream_vectors<value_type,allocator_type> vectors(false);
+            binary_stream_vectors<value_type,allocator_type> vectors(false, vm["block_size"].as<int>(), vm["vect_size"].as<int>());
             copy_benchmark<binary_stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             scale_benchmark<binary_stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             add_benchmark<binary_stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
@@ -108,13 +108,13 @@ void stream_bench_routine(po::variables_map vm) {
 
     } else {
         if (vm.count("compress")){
-            stream_vectors<value_type,allocator_type> vectors(true);
+            stream_vectors<value_type,allocator_type> vectors(true, vm["block_size"].as<int>(), vm["vect_size"].as<int>());
             copy_benchmark<stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             scale_benchmark<stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             add_benchmark<stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             triad_benchmark<stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
         } else {
-            stream_vectors<value_type,allocator_type> vectors(false);
+            stream_vectors<value_type,allocator_type> vectors(false, vm["block_size"].as<int>(), vm["vect_size"].as<int>());
             copy_benchmark<stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             scale_benchmark<stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;
             add_benchmark<stream_vectors<value_type,allocator_type>,value_type,allocator_type> (vectors) ;

@@ -60,17 +60,17 @@ namespace neuromapp {
     template <typename value_type,typename allocator_type> 
         class binary_stream_vectors {
             typedef typename Conv_info<value_type>::bytetype binary_rep;
-            const static size_type block_size =  8000;
+            const size_type block_size;
             size_type block_mem_size;
             bool compress_opt = false;
-            const static int vect_size = 640;
+            const int vect_size;
             /*this is the number of times that we run each benchmark computation before taking the minimum time*/
             vector<block<binary_rep,allocator_type>> v_a;
             vector<block<binary_rep,allocator_type>> v_b;
             vector<block<binary_rep,allocator_type>> v_c;
             // calculation results section
             public:
-            binary_stream_vectors(bool compress_arg) : compress_opt{compress_arg}  {
+            binary_stream_vectors (bool compress_arg, int block_size, int vec_size) : block_size(block_size), compress_opt{compress_arg}, vect_size(vec_size) {
 //#pragma omp parallel for
                 for (int i = 0 ; i < vect_size; i++) {
                     block<value_type,allocator_type> ba(block_size);
@@ -140,17 +140,17 @@ namespace neuromapp {
 
     template <typename value_type,typename allocator_type> 
         class stream_vectors {
-            const static size_type block_size =  8000;
+            const size_type block_size;
             size_type block_mem_size;
             bool compress_opt;
-            const static int vect_size = 640;
+            const int vect_size;
             /*this is the number of times that we run each benchmark computation before taking the minimum time*/
             vector<block<value_type,allocator_type>> v_a;
             vector<block<value_type,allocator_type>> v_b;
             vector<block<value_type,allocator_type>> v_c;
             // calculation results section
             public:
-            stream_vectors (bool compress_arg) : compress_opt{compress_arg} {
+            stream_vectors (bool compress_arg, int block_size, int vec_size) : block_size(block_size), compress_opt{compress_arg}, vect_size(vec_size) {
 //#pragma omp parallel for
                 for (int i = 0 ; i < vect_size; i++) {
                     block<value_type,allocator_type> ba(block_size);

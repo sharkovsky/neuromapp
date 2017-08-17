@@ -75,6 +75,8 @@ int comp_execute(int argc,char *const argv[])
             ("kernel_measure","run increasingly complex calculations on block comparing timing performance tradeoff for compression")
             ("stream_benchmark","use a McCalpin STREAM inspired set of benchmarks to measure bandwith on the computer")
          ("numthread", po::value<int>()->default_value(1), "number of OMP thread")
+         ("block_size", po::value<int>()->default_value(8000), "size of a block in the stream benchmark")
+         ("vect_size", po::value<int>()->default_value(640), "number of blocks in a vector, in the stream benchmark")
          ("benchmark","run all of the files in data directory, create csv with output stats");
         //create variable map
         po::variables_map vm;
